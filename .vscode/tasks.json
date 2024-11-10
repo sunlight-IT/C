@@ -1,0 +1,26 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "C/C++: g++.exe build active file",
+			"command": "C:/VS/MinGW-w64/mingw-w64-gcc-13.3-stable-r41/bin/g++.exe",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-g",
+				"${file}",
+				"-o",
+				"${fileDirname}\\${fileBasenameNoExtension}.exe",
+				"-lws2_32" //正常编译是无此链接的
+			],
+			"options": {
+				"cwd": "C:/VS/MinGW-w64/mingw-w64-gcc-13.3-stable-r41/bin"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: C:/Visual_Studio/vscode/mingw-19/MinGW/bin/g++.exe"
+		}
+	]
+}
