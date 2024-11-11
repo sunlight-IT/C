@@ -1,78 +1,123 @@
 #include "database.h"
-#include "stdio.h"
-#include "stdint.h"
 #include "stdbool.h"
+#include "stdint.h"
+#include "stdio.h"
 #include "string.h"
 
 
-typedef enum{
+typedef enum
+{
     kcfgtime,
     kcfguserName,
     kcfgacidName,
 } cfg_field_type;
 
 
-typedef enum{
+typedef enum
+{
     kcfgint32,
     kcfgfloat,
     kcfgstr,
 } cfg_data_type;
 
-//×Ö¶ÎÊôÐÔ ×Ö¶ÎÃû£¬Êý¾ÝÀàÐÍ£¬ÐÅÏ¢
-typedef struct{
+typedef struct
+{
     cfg_field_type field_type;
-    cfg_data_type type;
-    const char* info;
+    cfg_data_type  type;
+    const char*    info;
 } cfg_field_info;
 
-//¼ÇÂ¼ÊôÐÔ£ºidºÍ4¸ö×Ö¶Î
-typedef struct{
-    uint32_t index;
+// ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Ô£ï¿½idï¿½ï¿½4ï¿½ï¿½ï¿½Ö¶ï¿½
+typedef struct
+{
+    uint32_t       index;
     cfg_field_info record[4];
 } field_record_t;
 
 
-//±íÊôÐÔ£¬±í´óÐ¡£¬Ö¸ÏòµÚÒ»Ìõ¼ÇÂ¼
-typedef struct{
-    uint32_t size;
-    field_record_t* head; 
-}cfg_surface_t;
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Â¼
+typedef struct
+{
+    uint32_t        size;
+    field_record_t* head;
+} cfg_surface_t;
 
 
 
-typedef struct{
-    int32_t head;
-    int32_t checksum;
+typedef struct
+{
+    int32_t        head;
+    int32_t        checksum;
     field_record_t cfg_info[10];
 } cfg_cache_t;
 
 
-//¼ÇÂ¼Êý×é
+// ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½
 static field_record_t database_info[] = {
-    {0, {{kcfgtime, kcfgint32, "0"},{kcfgtime, kcfgstr, "1"}, {kcfgtime, kcfgstr, "2"}, {kcfgtime, kcfgint32, "3"}}},
-    {1, {{kcfgtime, kcfgint32, ""},{kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgint32, ""}}},
-    {2, {{kcfgtime, kcfgint32, ""},{kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgint32, ""}}},
-    {3, {{kcfgtime, kcfgint32, ""},{kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgint32, ""}}},
-    {4, {{kcfgtime, kcfgint32, ""},{kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgint32, ""}}},
-    {5, {{kcfgtime, kcfgint32, ""},{kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgint32, ""}}},
-    {6, {{kcfgtime, kcfgint32, "3"},{kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgint32, ""}}},
-    {7, {{kcfgtime, kcfgint32, ""},{kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgint32, ""}}},
-    {8, {{kcfgtime, kcfgint32, ""},{kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgint32, ""}}},
-    {9, {{kcfgtime, kcfgint32, ""},{kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgstr, ""}, {kcfgtime, kcfgint32, ""}}},
+    {0,
+     {{kcfgtime, kcfgint32, "0"},
+      {kcfgtime, kcfgstr, "1"},
+      {kcfgtime, kcfgstr, "2"},
+      {kcfgtime, kcfgint32, "3"}}},
+    {1,
+     {{kcfgtime, kcfgint32, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgint32, ""}}},
+    {2,
+     {{kcfgtime, kcfgint32, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgint32, ""}}},
+    {3,
+     {{kcfgtime, kcfgint32, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgint32, ""}}},
+    {4,
+     {{kcfgtime, kcfgint32, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgint32, ""}}},
+    {5,
+     {{kcfgtime, kcfgint32, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgint32, ""}}},
+    {6,
+     {{kcfgtime, kcfgint32, "3"},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgint32, ""}}},
+    {7,
+     {{kcfgtime, kcfgint32, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgint32, ""}}},
+    {8,
+     {{kcfgtime, kcfgint32, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgint32, ""}}},
+    {9,
+     {{kcfgtime, kcfgint32, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgstr, ""},
+      {kcfgtime, kcfgint32, ""}}},
 };
 
 
-static cfg_cache_t cfgCaChe;
-static  cfg_surface_t audit;
-int main(void){
-    audit.size = sizeof(database_info)/sizeof(field_record_t);
+static cfg_cache_t   cfgCaChe;
+static cfg_surface_t audit;
+int                  main(void)
+{
+    audit.size = sizeof(database_info) / sizeof(field_record_t);
     audit.head = database_info;
 
-    for(int i = 0; i < 10; i++){
-        audit.head[i].index =  i;
+    for (int i = 0; i < 10; i++) {
+        audit.head[i].index = i;
         memcpy(&(cfgCaChe.cfg_info[i]), &audit.head[i], sizeof(field_record_t));
     }
 
-    for(int j = 0; j < 4; j++)
-    printf("%s",cfgCaChe.cfg_info[6].record[j].info);
+    for (int j = 0; j < 4; j++) printf("%s", cfgCaChe.cfg_info[6].record[j].info);
 }
