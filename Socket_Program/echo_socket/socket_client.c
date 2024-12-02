@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
         fputs("Input message Q to quit):", stdout);
         fgets(message, BUF_SIZE, stdin);
 
-        if (!strcmp(message, "q/n") || !strcmp(message, "Q\n")) break;
+        if (!strcmp(message, "q\n") || !strcmp(message, "Q\n")) break;
 
         strLen = send(hSocket, message, strlen(message), 0);
         while (readLen < strLen) {

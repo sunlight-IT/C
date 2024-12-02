@@ -64,7 +64,8 @@
         "format": "c",
         "chrono": "c",
         "ranges": "c",
-        "variant": "c"
+        "variant": "c",
+        "windows.h": "c"
     },
     "editor.suggest.snippetsPreventQuickSuggestions": false,
     "aiXcoder.showTrayIcon": true
